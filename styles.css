@@ -199,6 +199,13 @@ textarea {
   transition: all 300ms ease;
 }
 
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1.05fr);
+  gap: 24px;
+  transition: all 300ms ease;
+}
+
 .page-shell.fullscreen-mode .workspace {
   grid-template-columns: 1fr 1fr;
   gap: 0;
@@ -206,10 +213,11 @@ textarea {
   width: 100vw;
   padding: 0;
   margin-left: calc(-50vw + 50%);
-  line-height: 1.5;
 }
-  transition: all 300ms ease;
-  border-radius: var(--radius-lg);
+
+.panel {
+  padding: 20px;
+  min-height: 65vh;
 }
 
 .page-shell.fullscreen-mode .panel {
@@ -218,16 +226,6 @@ textarea {
   height: 100%;
   padding: 24px;
   overflow: hidden;
-
-.workspace {
-  display: grid;
-  grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1.05fr);
-  gap: 24px;
-}
-
-.panel {
-  padding: 20px;
-  min-height: 65vh;
 }
 
 .panel-header {
@@ -245,34 +243,20 @@ textarea {
 
 .ghost-button {
   border: 1px solid rgba(122, 51, 22, 0.2);
-  transition: all 300ms ease;
-}
-
-.page-shell.fullscreen-mode #markdown-input {
-  height: calc(100% - 54px);
-  border: none;
-  border-radius: 0;
-  resize: none;
   border-radius: 999px;
   background: var(--surface-strong);
-  padding: 10px 16px;
+  padding: 6px 14px;
   cursor: pointer;
+  transition: all 300ms ease;
 }
 
 .ghost-button:hover {
   border-color: rgba(122, 51, 22, 0.45);
+  background: var(--surface);
 }
 
 #markdown-input {
   width: 100%;
-  transition: all 300ms ease;
-}
-
-.page-shell.fullscreen-mode .markdown-body {
-  height: calc(100% - 54px);
-  border: none;
-  border-radius: 0;
-  background: var(--surface-strong);
   height: calc(65vh - 64px);
   border: 1px solid rgba(73, 52, 31, 0.12);
   border-radius: var(--radius-md);
@@ -281,6 +265,14 @@ textarea {
   background: var(--surface-strong);
   color: var(--text);
   line-height: 1.65;
+  transition: all 300ms ease;
+}
+
+.page-shell.fullscreen-mode #markdown-input {
+  height: calc(100% - 54px);
+  border: none;
+  border-radius: 0;
+  resize: none;
 }
 
 .markdown-body {
@@ -291,6 +283,13 @@ textarea {
   border: 1px solid rgba(73, 52, 31, 0.12);
   padding: 22px;
   line-height: 1.7;
+}
+
+.page-shell.fullscreen-mode .markdown-body {
+  height: calc(100% - 54px);
+  border: none;
+  border-radius: 0;
+  overflow: auto;
 }
 
 .markdown-body h1,
@@ -364,4 +363,122 @@ textarea {
   .markdown-body {
     height: 52vh;
   }
+}
+
+/* ── XML Tree ──────────────────────────────────────────────────────────────── */
+
+.xml-mode {
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.xml-tree {
+  padding: 4px 0;
+}
+
+.xml-node {
+  position: relative;
+  padding-left: 22px;
+  margin: 1px 0;
+}
+
+.xml-toggle {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.6rem;
+  color: var(--muted);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.xml-toggle:hover {
+  color: var(--accent);
+  background: rgba(178, 86, 47, 0.08);
+}
+
+.xml-open-tag,
+.xml-close-tag {
+  color: #3e87d6;
+}
+
+.xml-attr-name {
+  color: #5aaa5a;
+}
+
+.xml-attr-value {
+  color: #e0723a;
+}
+
+.xml-text {
+  color: var(--text);
+}
+
+.xml-comment {
+  color: #8e9aa8;
+  font-style: italic;
+  padding-left: 0;
+}
+
+.xml-pi {
+  color: #b39ddb;
+  padding-left: 0;
+}
+
+.xml-children {
+  padding-left: 22px;
+  border-left: 1.5px solid rgba(73, 52, 31, 0.12);
+  margin-left: 7px;
+}
+
+.xml-children.xml-collapsed {
+  display: none;
+}
+
+.xml-error {
+  color: #c0392b;
+  background: rgba(192, 57, 43, 0.07);
+  border: 1px solid rgba(192, 57, 43, 0.28);
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.repomix-preamble {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  padding: 8px 4px 12px;
+  white-space: pre-wrap;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.repomix-content {
+  margin: 6px 0 0;
+  padding: 14px 16px;
+  background: #1e1a17;
+  color: #ede4d8;
+  border-radius: 10px;
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  overflow: auto;
+  max-height: 60vh;
+  white-space: pre;
+  word-break: normal;
 }

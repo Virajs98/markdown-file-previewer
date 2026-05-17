@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Markdown File Previewer</title>
+    <title>Markdown &amp; XML File Previewer</title>
     <meta
       name="description"
-      content="Upload one Markdown file and preview it instantly in a clean split-screen interface."
+      content="Upload a .md or .xml file and preview it instantly in a clean split-screen interface."
     />
     <link rel="stylesheet" href="./styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -20,19 +20,19 @@
       </div>
       <header class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Single-file Markdown preview</p>
-          <h1>Upload one <span>.md</span> file and read it properly.</h1>
+          <p class="eyebrow">Single-file preview · Markdown &amp; XML</p>
+          <h1>Upload one <span>.md</span> or <span>.xml</span> file.</h1>
           <p class="hero-text">
-            This is a lightweight static app. Choose a Markdown file, inspect the raw content,
-            and see the rendered preview side by side.
+            A lightweight static app. Choose a Markdown or XML file, inspect the raw content,
+            and see the rendered preview or interactive tree view side by side.
           </p>
         </div>
 
         <section class="upload-card" aria-label="Markdown upload controls">
           <label class="upload-zone" for="markdown-file">
-            <input id="markdown-file" type="file" accept=".md,.markdown,text/markdown" />
-            <span class="upload-title">Select a Markdown file</span>
-            <span class="upload-subtitle">Only one file is used. Drag and drop also works.</span>
+            <input id="markdown-file" type="file" accept=".md,.markdown,.xml,text/markdown,text/xml,application/xml" />
+            <span class="upload-title">Select a .md or .xml file</span>
+            <span class="upload-subtitle">One file at a time. Drag and drop also works.</span>
           </label>
 
           <div class="file-meta">
@@ -49,7 +49,7 @@
       <main class="workspace" aria-label="Markdown workspace">
         <section class="panel editor-panel">
           <div class="panel-header">
-            <h2>Markdown Source</h2>
+            <h2 id="source-panel-title">Markdown Source</h2>
             <button id="clear-button" class="ghost-button" type="button">Reset</button>
           </div>
           <textarea
@@ -61,8 +61,8 @@
 
         <section class="panel preview-panel">
           <div class="panel-header">
-            <h2>Preview</h2>
-            <span class="preview-hint">Sanitised HTML output</span>
+            <h2 id="preview-panel-title">Preview</h2>
+            <span id="preview-hint" class="preview-hint">Sanitised HTML output</span>
           </div>
           <article id="markdown-preview" class="markdown-body"></article>
         </section>

@@ -357,5 +357,26 @@ fullscreenButton.addEventListener("click", () => {
   fullscreenButton.setAttribute("aria-pressed", pageShell.classList.contains("fullscreen-mode"));
 });
 
+// Preview panel expand / fullscreen
+const previewExpandBtn = document.querySelector("#preview-expand");
+const previewPanel = document.querySelector(".preview-panel");
+
+function setPreviewExpanded(expanded) {
+  previewPanel.classList.toggle("preview-expanded", expanded);
+  previewExpandBtn.setAttribute("aria-pressed", expanded);
+  previewExpandBtn.textContent = expanded ? "⤡" : "⤢";
+  previewExpandBtn.title = expanded ? "Exit fullscreen (Esc)" : "Expand preview fullscreen (Esc to exit)";
+}
+
+previewExpandBtn.addEventListener("click", () => {
+  setPreviewExpanded(!previewPanel.classList.contains("preview-expanded"));
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && previewPanel.classList.contains("preview-expanded")) {
+    setPreviewExpanded(false);
+  }
+});
+
 updateFileMeta("No file selected", 0);
 setEditorContent(starterMarkdown);

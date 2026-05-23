@@ -223,7 +223,93 @@ function renderXml(xmlText) {
   markdownPreview.innerHTML = `<div class="xml-tree">${renderTextSections(sections)}</div>`;
 }
 
+// ── JSONL ─────────────────────────────────────────────────────────────────────────────
+
+function jsonSyntaxHtml(value, depth) {
+  if (value === null) return `<span class="jv-null">null</span>`;
+  if (typeof value === "boolean") return `<span class="jv-bool">${value}</span>`;
+  if (typeof value === "number") return `<span class="jv-num">${value}</span>`;
+  if (typeof value === "string") return `<span class="jv-str">${escapeHtml(JSON.stringify(value))}</span>`;
+
+  const indent = "  ".repeat(depth + 1);
+  const closeIndent = "  ".repeat(depth);
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) return `<span class="jv-bracket">[]</span>`;
+    const items = value.map((v) => `${indent}${jsonSyntaxHtml(v, depth + 1)}`).join(",\n");
+    return `<span class="jv-bracket">[</span>\n${items}\n${closeIndent}<span class="jv-bracket">]</span>`;
+  }
+
+  const entries = Object.entries(value);
+  if (entries.length === 0) return `<span class="jv-bracket">{}</span>`;
+  const lines = entries.map(([k, v]) =>
+    `${indent}<span class="jv-key">${escapeHtml(JSON.stringify(k))}</span>: ${jsonSyntaxHtml(v, depth + 1)}`
+  );
+  return `<span class="jv-bracket">{</span>\n${lines.join(",\n")}\n${closeIndent}<span class="jv-bracket">}</span>`;
+}
+
+function jsonlSummary(obj) {
+  const fields = ["type", "role", "name", "id", "timestamp", "message"];
+  const parts = [];
+  for (const f of fields) {
+    if (f in obj) {
+      const v = obj[f];
+      const display = typeof v === "object" && v !== null ? "{…}" : String(v);
+      parts.push(`<span class="jsonl-key">${escapeHtml(f)}</span>: <span class="jsonl-val">${escapeHtml(display)}</span>`);
+    }
+    if (parts.length >= 3) break;
+  }
+  if (!parts.length) {
+    const first = Object.entries(obj)[0];
+    if (first) parts.push(`<span class="jsonl-key">${escapeHtml(first[0])}</span>: <span class="jsonl-val">${escapeHtml(String(first[1]))}</span>`);
+  }
+  return parts.join(" · ");
+}
+
+function renderJsonl(text) {
+  const lines = text.split("\n").filter((l) => l.trim() !== "");
+  if (lines.length === 0) {
+    markdownPreview.innerHTML = `<p class="jsonl-empty">Empty file.</p>`;
+    return;
+  }
+
+  let html = `<div class="jsonl-viewer">`;
+  lines.forEach((line, i) => {
+    let parsed;
+    try {
+      parsed = JSON.parse(line);
+    } catch {
+      html += `<div class="jsonl-card jsonl-error">
+        <span class="jsonl-line-num">#${i + 1}</span>
+        <span class="jsonl-summary-text">Parse error — ${escapeHtml(line.slice(0, 80))}${line.length > 80 ? "…" : ""}</span>
+      </div>`;
+      return;
+    }
+    const uid = "jl" + Math.random().toString(36).slice(2, 9);
+    const summary = typeof parsed === "object" && parsed !== null ? jsonlSummary(parsed) : escapeHtml(String(parsed));
+    html += `<div class="jsonl-card">
+      <button class="jsonl-toggle" data-target="${uid}" aria-expanded="false">►</button>
+      <span class="jsonl-line-num">#${i + 1}</span>
+      <span class="jsonl-summary-text">${summary}</span>
+      <pre class="jsonl-body jsonl-collapsed" id="${uid}">${jsonSyntaxHtml(parsed, 0)}</pre>
+    </div>`;
+  });
+  html += `</div>`;
+  markdownPreview.innerHTML = html;
+}
+
 markdownPreview.addEventListener("click", (event) => {
+  // JSONL card toggle
+  const jlToggle = event.target.closest(".jsonl-toggle");
+  if (jlToggle) {
+    const body = document.getElementById(jlToggle.dataset.target);
+    if (!body) return;
+    const collapsed = body.classList.toggle("jsonl-collapsed");
+    jlToggle.textContent = collapsed ? "►" : "▼";
+    jlToggle.setAttribute("aria-expanded", String(!collapsed));
+    return;
+  }
+
   const toggle = event.target.closest(".xml-toggle");
   if (!toggle) return;
   const childrenEl = document.getElementById(toggle.dataset.target);
@@ -266,12 +352,21 @@ function setMode(mode) {
     previewHint.textContent = "Collapsible tree — click ▼ to expand/collapse";
     markdownInput.readOnly = true;
     markdownPreview.classList.add("xml-mode");
+    markdownPreview.classList.remove("jsonl-mode");
+  } else if (mode === "jsonl") {
+    sourcePanelTitle.textContent = "Raw JSONL";
+    previewPanelTitle.textContent = "JSONL Records";
+    previewHint.textContent = `${markdownInput.value.split("\n").filter((l) => l.trim()).length} records — click ► to expand`;
+    markdownInput.readOnly = true;
+    markdownPreview.classList.remove("xml-mode");
+    markdownPreview.classList.add("jsonl-mode");
   } else {
     sourcePanelTitle.textContent = "Markdown Source";
     previewPanelTitle.textContent = "Preview";
     previewHint.textContent = "Sanitised HTML output";
     markdownInput.readOnly = false;
     markdownPreview.classList.remove("xml-mode");
+    markdownPreview.classList.remove("jsonl-mode");
   }
 }
 
@@ -281,9 +376,10 @@ async function loadFile(file) {
   if (!file) return;
   const isMarkdown = /\.(md|markdown)$/i.test(file.name) || file.type.includes("markdown");
   const isXml = /\.xml$/i.test(file.name) || file.type === "text/xml" || file.type === "application/xml";
+  const isJsonl = /\.jsonl$/i.test(file.name);
 
-  if (!isMarkdown && !isXml) {
-    setStatus("Please choose a .md or .xml file.");
+  if (!isMarkdown && !isXml && !isJsonl) {
+    setStatus("Please choose a .md, .xml or .jsonl file.");
     return;
   }
 
@@ -292,7 +388,6 @@ async function loadFile(file) {
 
   if (isXml) {
     setMode("xml");
-    // Show the tree immediately; load raw text into textarea after paint
     markdownInput.value = "Loading raw content…";
     setStatus(`Parsing ${file.name}…`);
     renderXml(content);
@@ -300,6 +395,12 @@ async function loadFile(file) {
       markdownInput.value = content;
       setStatus(`Loaded ${file.name}. Expand ► sections in the tree to browse all details.`);
     }, 0);
+  } else if (isJsonl) {
+    markdownInput.value = content;
+    setMode("jsonl");
+    renderJsonl(content);
+    const count = content.split("\n").filter((l) => l.trim()).length;
+    setStatus(`Loaded ${file.name} — ${count} record${count !== 1 ? "s" : ""}. Click ► to expand any row.`);
   } else {
     setMode("markdown");
     setEditorContent(content);

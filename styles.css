@@ -524,3 +524,109 @@ textarea {
   white-space: pre;
   word-break: normal;
 }
+
+/* ── JSONL Viewer ────────────────────────────────────────────────────────── */
+
+.jsonl-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.jsonl-card {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-strong);
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 0.8rem;
+  transition: border-color 150ms ease;
+}
+
+.jsonl-card:hover {
+  border-color: rgba(178, 86, 47, 0.35);
+}
+
+.jsonl-card.jsonl-error {
+  border-color: rgba(192, 57, 43, 0.4);
+  background: rgba(192, 57, 43, 0.05);
+}
+
+.jsonl-toggle {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.6rem;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: color 150ms ease, background 150ms ease;
+  align-self: center;
+}
+
+.jsonl-toggle:hover {
+  color: var(--accent);
+  background: rgba(178, 86, 47, 0.08);
+}
+
+.jsonl-line-num {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  min-width: 2.8ch;
+}
+
+.jsonl-summary-text {
+  flex: 1;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jsonl-key { color: #5aaa5a; }
+.jsonl-val { color: #e0723a; }
+
+.jsonl-body {
+  width: 100%;
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  background: #1e1a17;
+  color: #ede4d8;
+  border-radius: 8px;
+  font-family: "Cascadia Code", "Consolas", monospace;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  overflow: auto;
+  max-height: 50vh;
+  white-space: pre;
+}
+
+.jsonl-body.jsonl-collapsed {
+  display: none;
+}
+
+/* JSON syntax colours inside expanded card */
+.jv-null    { color: #b39ddb; }
+.jv-bool    { color: #80cbc4; }
+.jv-num     { color: #f9a825; }
+.jv-str     { color: #aed581; }
+.jv-key     { color: #90caf9; }
+.jv-bracket { color: #ede4d8; }
+
+.jsonl-empty {
+  color: var(--muted);
+  font-style: italic;
+  padding: 16px;
+}

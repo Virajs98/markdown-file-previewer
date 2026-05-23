@@ -6,12 +6,13 @@
     <title>Markdown &amp; XML File Previewer</title>
     <meta
       name="description"
-      content="Upload a .md or .xml file and preview it instantly in a clean split-screen interface."
+          content="Upload a .md, .xml or .jsonl file and preview it instantly in a clean split-screen interface."
     />
     <link rel="stylesheet" href="./styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
     <script src="./app.js" defer></script>
+    <script defer src="/_vercel/insights/script.js"></script>
   </head>
   <body>
     <div class="page-shell">
@@ -21,17 +22,17 @@
       <header class="hero">
         <div class="hero-copy">
           <p class="eyebrow">Single-file preview · Markdown &amp; XML</p>
-          <h1>Upload one <span>.md</span> or <span>.xml</span> file.</h1>
+          <h1>Upload one <span>.md</span>, <span>.xml</span> or <span>.jsonl</span> file.</h1>
           <p class="hero-text">
-            A lightweight static app. Choose a Markdown or XML file, inspect the raw content,
+            A lightweight static app. Choose a Markdown, XML or JSONL file, inspect the raw content,
             and see the rendered preview or interactive tree view side by side.
           </p>
         </div>
 
         <section class="upload-card" aria-label="Markdown upload controls">
           <label class="upload-zone" for="markdown-file">
-            <input id="markdown-file" type="file" accept=".md,.markdown,.xml,text/markdown,text/xml,application/xml" />
-            <span class="upload-title">Select a .md or .xml file</span>
+            <input id="markdown-file" type="file" accept=".md,.markdown,.xml,.jsonl,text/markdown,text/xml,application/xml,application/jsonl" />
+            <span class="upload-title">Select a .md, .xml or .jsonl file</span>
             <span class="upload-subtitle">One file at a time. Drag and drop also works.</span>
           </label>
 
